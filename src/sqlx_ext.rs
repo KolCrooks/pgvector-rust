@@ -39,6 +39,12 @@ impl PgHasArrayType for Vector {
     }
 }
 
+impl PgHasArrayType for &Vector {
+    fn array_type_info() -> PgTypeInfo {
+        PgTypeInfo::with_name("_vector")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::Vector;
@@ -105,6 +111,12 @@ mod tests {
         assert_eq!("[1,2,3]", text_res);
 
         sqlx::query("ALTER TABLE sqlx_items ADD COLUMN factors vector[]")
+            .execute(&pool)
+            .await?;
+
+        let vecs = vec![&vec, &vec2];
+        sqlx::query("INSERT INTO sqlx_items (factors) VALUES ($1)")
+            .bind(&vecs)
             .execute(&pool)
             .await?;
 
