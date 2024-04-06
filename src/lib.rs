@@ -11,7 +11,7 @@ pub use vector::Vector;
 mod halfvec;
 
 #[cfg(feature = "halfvec")]
-pub use halfvec::HalfVector;
+pub use halfvec::HalfVec;
 
 #[cfg(feature = "postgres")]
 mod postgres_ext;

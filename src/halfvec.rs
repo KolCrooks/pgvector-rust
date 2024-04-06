@@ -2,21 +2,21 @@ use half::f16;
 
 /// A half vector.
 #[derive(Clone, Debug, PartialEq)]
-pub struct HalfVector(pub(crate) Vec<f16>);
+pub struct HalfVec(pub(crate) Vec<f16>);
 
-impl From<Vec<f16>> for HalfVector {
+impl From<Vec<f16>> for HalfVec {
     fn from(v: Vec<f16>) -> Self {
-        HalfVector(v)
+        HalfVec(v)
     }
 }
 
-impl From<HalfVector> for Vec<f16> {
-    fn from(val: HalfVector) -> Self {
+impl From<HalfVec> for Vec<f16> {
+    fn from(val: HalfVec) -> Self {
         val.0
     }
 }
 
-impl HalfVector {
+impl HalfVec {
     /// Returns a copy of the vector as a `Vec<f16>`.
     pub fn to_vec(&self) -> Vec<f16> {
         self.0.clone()
@@ -30,7 +30,7 @@ impl HalfVector {
     #[cfg(any(feature = "postgres"))]
     pub(crate) fn from_sql(
         buf: &[u8],
-    ) -> Result<HalfVector, Box<dyn std::error::Error + Sync + Send>> {
+    ) -> Result<HalfVec, Box<dyn std::error::Error + Sync + Send>> {
         let dim = u16::from_be_bytes(buf[0..2].try_into()?) as usize;
         let unused = u16::from_be_bytes(buf[2..4].try_into()?);
         if unused != 0 {
@@ -43,18 +43,18 @@ impl HalfVector {
             vec.push(f16::from_be_bytes(buf[s..s + 2].try_into()?));
         }
 
-        Ok(HalfVector(vec))
+        Ok(HalfVec(vec))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::HalfVector;
+    use crate::HalfVec;
     use half::f16;
 
     #[test]
     fn test_into() {
-        let vec = HalfVector::from(vec![
+        let vec = HalfVec::from(vec![
             f16::from_f32(1.0),
             f16::from_f32(2.0),
             f16::from_f32(3.0),
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn test_to_vec() {
-        let vec = HalfVector::from(vec![
+        let vec = HalfVec::from(vec![
             f16::from_f32(1.0),
             f16::from_f32(2.0),
             f16::from_f32(3.0),
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn test_as_slice() {
-        let vec = HalfVector::from(vec![
+        let vec = HalfVec::from(vec![
             f16::from_f32(1.0),
             f16::from_f32(2.0),
             f16::from_f32(3.0),
