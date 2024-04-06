@@ -11,7 +11,7 @@ jobs:
           dev-files: true
       - run: |
           cd /tmp
-          git clone --branch v0.6.0 https://github.com/pgvector/pgvector.git
+          git clone --branch master https://github.com/pgvector/pgvector.git
           cd pgvector
           make
           sudo make install
@@ -21,3 +21,4 @@ jobs:
       - run: cargo test --features sqlx
       - run: cargo test --features diesel
       - run: cargo test --features serde
+      - run: cargo test --features postgres,halfvec

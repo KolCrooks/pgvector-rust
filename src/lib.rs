@@ -7,6 +7,12 @@ extern crate diesel;
 mod vector;
 pub use vector::Vector;
 
+#[cfg(feature = "halfvec")]
+mod halfvec;
+
+#[cfg(feature = "halfvec")]
+pub use halfvec::HalfVector;
+
 #[cfg(feature = "postgres")]
 mod postgres_ext;
 
