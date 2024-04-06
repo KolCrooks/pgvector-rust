@@ -53,9 +53,9 @@ mod tests {
             .connect(NoTls)?;
 
         client.execute("CREATE EXTENSION IF NOT EXISTS vector", &[])?;
-        client.execute("DROP TABLE IF EXISTS postgres_halfvec_items", &[])?;
+        client.execute("DROP TABLE IF EXISTS postgres_half_items", &[])?;
         client.execute(
-            "CREATE TABLE postgres_halfvec_items (id bigserial PRIMARY KEY, embedding halfvec(3))",
+            "CREATE TABLE postgres_half_items (id bigserial PRIMARY KEY, embedding halfvec(3))",
             &[],
         )?;
 
@@ -70,7 +70,7 @@ mod tests {
             f16::from_f32(6.0),
         ]);
         client.execute(
-            "INSERT INTO postgres_halfvec_items (embedding) VALUES ($1), ($2), (NULL)",
+            "INSERT INTO postgres_half_items (embedding) VALUES ($1), ($2), (NULL)",
             &[&vec, &vec2],
         )?;
 
@@ -80,7 +80,7 @@ mod tests {
             f16::from_f32(2.0),
         ]);
         let row = client.query_one(
-            "SELECT embedding FROM postgres_halfvec_items ORDER BY embedding <-> $1 LIMIT 1",
+            "SELECT embedding FROM postgres_half_items ORDER BY embedding <-> $1 LIMIT 1",
             &[&query_vec],
         )?;
         let res_vec: HalfVec = row.get(0);
@@ -92,7 +92,7 @@ mod tests {
 
         let empty_vec = HalfVec::from(vec![]);
         let empty_res = client.execute(
-            "INSERT INTO postgres_halfvec_items (embedding) VALUES ($1)",
+            "INSERT INTO postgres_half_items (embedding) VALUES ($1)",
             &[&empty_vec],
         );
         assert!(empty_res.is_err());
@@ -102,7 +102,7 @@ mod tests {
             .contains("halfvec must have at least 1 dimension"));
 
         let null_row = client.query_one(
-            "SELECT embedding FROM postgres_halfvec_items WHERE embedding IS NULL LIMIT 1",
+            "SELECT embedding FROM postgres_half_items WHERE embedding IS NULL LIMIT 1",
             &[],
         )?;
         let null_res: Option<HalfVec> = null_row.get(0);
@@ -110,7 +110,7 @@ mod tests {
 
         // ensures binary format is correct
         let text_row = client.query_one(
-            "SELECT embedding::text FROM postgres_halfvec_items ORDER BY id LIMIT 1",
+            "SELECT embedding::text FROM postgres_half_items ORDER BY id LIMIT 1",
             &[],
         )?;
         let text_res: String = text_row.get(0);
@@ -119,7 +119,7 @@ mod tests {
         // copy
         let halfvec_type = get_type(&mut client, "halfvec")?;
         let writer = client
-            .copy_in("COPY postgres_halfvec_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
+            .copy_in("COPY postgres_half_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
         let mut writer = BinaryCopyInWriter::new(writer, &[halfvec_type]);
         writer
             .write(&[&HalfVec::from(vec![
