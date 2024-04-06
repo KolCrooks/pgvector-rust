@@ -79,40 +79,33 @@ mod tests {
         let res_vec: SparseVec = row.get(0);
         assert_eq!(vec, res_vec);
 
-        // let empty_vec = SparseVec::from(vec![]);
-        // let empty_res = client.execute(
-        //     "INSERT INTO postgres_sparse_items (embedding) VALUES ($1)",
-        //     &[&empty_vec],
-        // );
-        // assert!(empty_res.is_err());
-        // assert!(empty_res
-        //     .unwrap_err()
-        //     .to_string()
-        //     .contains("vector must have at least 1 dimension"));
+        let null_row = client.query_one(
+            "SELECT embedding FROM postgres_sparse_items WHERE embedding IS NULL LIMIT 1",
+            &[],
+        )?;
+        let null_res: Option<SparseVec> = null_row.get(0);
+        assert!(null_res.is_none());
 
-        // let null_row = client.query_one(
-        //     "SELECT embedding FROM postgres_sparse_items WHERE embedding IS NULL LIMIT 1",
-        //     &[],
-        // )?;
-        // let null_res: Option<SparseVec> = null_row.get(0);
-        // assert!(null_res.is_none());
+        // ensures binary format is correct
+        let text_row = client.query_one(
+            "SELECT embedding::text FROM postgres_sparse_items ORDER BY id LIMIT 1",
+            &[],
+        )?;
+        let text_res: String = text_row.get(0);
+        assert_eq!("{1:1,3:2,5:3}/5", text_res);
 
-        // // ensures binary format is correct
-        // let text_row = client.query_one(
-        //     "SELECT embedding::text FROM postgres_sparse_items ORDER BY id LIMIT 1",
-        //     &[],
-        // )?;
-        // let text_res: String = text_row.get(0);
-        // assert_eq!("[1,2,3]", text_res);
-
-        // // copy
-        // let vector_type = get_type(&mut client, "sparsevec")?;
-        // let writer =
-        //     client.copy_in("COPY postgres_sparse_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
-        // let mut writer = BinaryCopyInWriter::new(writer, &[vector_type]);
-        // writer.write(&[&SparseVec::from(vec![1.0, 2.0, 3.0])]).unwrap();
-        // writer.write(&[&SparseVec::from(vec![4.0, 5.0, 6.0])]).unwrap();
-        // writer.finish()?;
+        // copy
+        let sparsevec_type = get_type(&mut client, "sparsevec")?;
+        let writer = client
+            .copy_in("COPY postgres_sparse_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
+        let mut writer = BinaryCopyInWriter::new(writer, &[sparsevec_type]);
+        writer
+            .write(&[&SparseVec::new(5, vec![0, 2, 4], vec![1.0, 2.0, 3.0])])
+            .unwrap();
+        writer
+            .write(&[&SparseVec::new(5, vec![0, 2, 4], vec![4.0, 5.0, 6.0])])
+            .unwrap();
+        writer.finish()?;
 
         Ok(())
     }
