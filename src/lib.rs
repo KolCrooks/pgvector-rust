@@ -7,6 +7,9 @@ extern crate diesel;
 mod vector;
 pub use vector::Vector;
 
+mod sparsevec;
+pub use sparsevec::SparseVec;
+
 #[cfg(feature = "halfvec")]
 mod halfvec;
 
