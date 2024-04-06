@@ -121,20 +121,16 @@ mod tests {
         let writer = client
             .copy_in("COPY postgres_half_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
         let mut writer = BinaryCopyInWriter::new(writer, &[halfvec_type]);
-        writer
-            .write(&[&HalfVec::from(vec![
-                f16::from_f32(1.0),
-                f16::from_f32(2.0),
-                f16::from_f32(3.0),
-            ])])
-            .unwrap();
-        writer
-            .write(&[&HalfVec::from(vec![
-                f16::from_f32(4.0),
-                f16::from_f32(5.0),
-                f16::from_f32(6.0),
-            ])])
-            .unwrap();
+        writer.write(&[&HalfVec::from(vec![
+            f16::from_f32(1.0),
+            f16::from_f32(2.0),
+            f16::from_f32(3.0),
+        ])])?;
+        writer.write(&[&HalfVec::from(vec![
+            f16::from_f32(4.0),
+            f16::from_f32(5.0),
+            f16::from_f32(6.0),
+        ])])?;
         writer.finish()?;
 
         Ok(())

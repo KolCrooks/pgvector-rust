@@ -99,12 +99,8 @@ mod tests {
         let writer = client
             .copy_in("COPY postgres_sparse_items (embedding) FROM STDIN WITH (FORMAT BINARY)")?;
         let mut writer = BinaryCopyInWriter::new(writer, &[sparsevec_type]);
-        writer
-            .write(&[&SparseVec::new(5, vec![0, 2, 4], vec![1.0, 2.0, 3.0])])
-            .unwrap();
-        writer
-            .write(&[&SparseVec::new(5, vec![0, 2, 4], vec![4.0, 5.0, 6.0])])
-            .unwrap();
+        writer.write(&[&SparseVec::new(5, vec![0, 2, 4], vec![1.0, 2.0, 3.0])])?;
+        writer.write(&[&SparseVec::new(5, vec![0, 2, 4], vec![4.0, 5.0, 6.0])])?;
         writer.finish()?;
 
         Ok(())
