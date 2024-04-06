@@ -15,6 +15,7 @@ jobs:
           cd pgvector
           make
           sudo make install
+      - run: psql -d pgvector_rust_test -c "CREATE EXTENSION vector"
 
       # test features individually
       - run: cargo test --features postgres
