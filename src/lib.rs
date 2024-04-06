@@ -4,11 +4,11 @@
 #[macro_use]
 extern crate diesel;
 
-mod vector;
-pub use vector::Vector;
-
 mod sparsevec;
+mod vector;
+
 pub use sparsevec::SparseVec;
+pub use vector::Vector;
 
 #[cfg(feature = "halfvec")]
 mod halfvec;
