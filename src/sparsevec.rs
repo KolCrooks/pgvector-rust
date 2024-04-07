@@ -17,7 +17,25 @@ impl SparseVec {
     }
 
     /// TODO
-    pub fn to_vec(&self) -> Vec<f32> {
+    pub fn from_dense(vec: &[f32]) -> SparseVec {
+        let dim = vec.len();
+        let mut indices = Vec::new();
+        let mut values = Vec::new();
+
+        for (i, v) in vec.iter().enumerate() {
+            indices.push(i.try_into().unwrap());
+            values.push(*v);
+        }
+
+        SparseVec {
+            dim,
+            indices,
+            values,
+        }
+    }
+
+    /// TODO
+    pub fn to_dense(&self) -> Vec<f32> {
         let mut vec = vec![0.0; self.dim];
         for (i, v) in self.indices.iter().zip(&self.values) {
             vec[*i as usize] = *v;
@@ -61,8 +79,14 @@ mod tests {
     use crate::SparseVec;
 
     #[test]
-    fn test_to_vec() {
+    fn test_from_dense() {
+        let vec = SparseVec::from_dense(&[1.0, 0.0, 2.0, 0.0, 3.0]);
+        assert_eq!(vec![1.0, 0.0, 2.0, 0.0, 3.0], vec.to_dense());
+    }
+
+    #[test]
+    fn test_to_dense() {
         let vec = SparseVec::new(5, vec![0, 2, 4], vec![1.0, 2.0, 3.0]);
-        assert_eq!(vec![1.0, 0.0, 2.0, 0.0, 3.0], vec.to_vec());
+        assert_eq!(vec![1.0, 0.0, 2.0, 0.0, 3.0], vec.to_dense());
     }
 }
