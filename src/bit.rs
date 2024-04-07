@@ -33,3 +33,15 @@ impl<'a> Bit<'a> {
         Ok(Bit { len, data })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::Bit;
+
+    #[test]
+    fn test_as_bytes() {
+        let vec = Bit::from_bytes(&[0b00000000, 0b11111111]);
+        assert_eq!(16, vec.len());
+        assert_eq!(&[0b00000000, 0b11111111], vec.as_bytes());
+    }
+}
