@@ -14,6 +14,14 @@ impl<'a> Bit<'a> {
         }
     }
 
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn as_bytes(&self) -> &'a [u8] {
+        self.data
+    }
+
     #[cfg(any(feature = "postgres"))]
     pub(crate) fn from_sql(buf: &[u8]) -> Result<Bit, Box<dyn std::error::Error + Sync + Send>> {
         let len = i32::from_be_bytes(buf[0..4].try_into()?) as usize;

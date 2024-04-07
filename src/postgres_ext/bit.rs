@@ -71,6 +71,8 @@ mod tests {
         )?;
         let res_vec: Bit = row.get(0);
         assert_eq!(vec, res_vec);
+        assert_eq!(8, res_vec.len());
+        assert_eq!(&[0b10101010], res_vec.as_bytes());
 
         let null_row = client.query_one(
             "SELECT embedding FROM postgres_bit_items WHERE embedding IS NULL LIMIT 1",
