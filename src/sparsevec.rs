@@ -7,6 +7,7 @@ pub struct SparseVec {
 }
 
 impl SparseVec {
+    /// TODO
     pub fn new(dim: usize, indices: Vec<i32>, values: Vec<f32>) -> SparseVec {
         SparseVec {
             dim,

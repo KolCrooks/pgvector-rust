@@ -6,6 +6,7 @@ pub struct Bit<'a> {
 }
 
 impl<'a> Bit<'a> {
+    /// TODO
     pub fn from_bytes(data: &'a [u8]) -> Bit {
         Bit {
             // TODO check for overflow
@@ -14,10 +15,12 @@ impl<'a> Bit<'a> {
         }
     }
 
+    /// TODO
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// TODO
     pub fn as_bytes(&self) -> &'a [u8] {
         self.data
     }
