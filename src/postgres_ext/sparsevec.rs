@@ -24,7 +24,7 @@ impl ToSql for SparseVec {
         w.put_i32(0);
 
         for v in &self.indices {
-            w.put_i32(*v + 1);
+            w.put_i32(*v);
         }
 
         for v in &self.values {

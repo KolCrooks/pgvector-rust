@@ -57,7 +57,7 @@ impl SparseVec {
         let mut indices = Vec::with_capacity(nnz);
         for i in 0..nnz {
             let s = 12 + 4 * i;
-            indices.push(i32::from_be_bytes(buf[s..s + 4].try_into()?) - 1);
+            indices.push(i32::from_be_bytes(buf[s..s + 4].try_into()?));
         }
 
         let mut values = Vec::with_capacity(nnz);
